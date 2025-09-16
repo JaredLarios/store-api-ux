@@ -5,7 +5,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS store.address
 (
-    address_id integer NOT NULL,
+    address_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     address_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     address_name_aes character varying(128) COLLATE pg_catalog."default" NOT NULL,
     customer_id integer NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS store.address
 
 CREATE TABLE IF NOT EXISTS store.card
 (
-    card_id integer NOT NULL,
+    card_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     card_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     card_number_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
     card_card_tail_number_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS store.card
 
 CREATE TABLE IF NOT EXISTS store.category
 (
-    category_id integer NOT NULL,
+    category_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     category_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     category_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
     category_name_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS store.category
 
 CREATE TABLE IF NOT EXISTS store.customer
 (
-    customer_id integer NOT NULL,
+    customer_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     customer_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     customer_name_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
     customer_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
@@ -56,13 +56,12 @@ CREATE TABLE IF NOT EXISTS store.customers_items
     customer_id integer NOT NULL,
     item_id integer NOT NULL,
     customers_items_purchase_date timestamp without time zone NOT NULL,
-    customers_items_col character varying(45) COLLATE pg_catalog."default",
     CONSTRAINT customers_items_pkey PRIMARY KEY (customer_id, item_id)
 );
 
 CREATE TABLE IF NOT EXISTS store.item
 (
-    item_id integer NOT NULL,
+    item_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     item_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     item_name_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
     item_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
@@ -85,7 +84,7 @@ CREATE TABLE IF NOT EXISTS store.item_has_category
 
 CREATE TABLE IF NOT EXISTS store.order_status
 (
-    order_status_id integer NOT NULL,
+    order_status_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     order_status_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     order_status_name character varying(45) COLLATE pg_catalog."default" NOT NULL,
     order_status_step_number integer NOT NULL,
@@ -94,7 +93,7 @@ CREATE TABLE IF NOT EXISTS store.order_status
 
 CREATE TABLE IF NOT EXISTS store.orders
 (
-    order_id integer NOT NULL,
+    order_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     order_uuid numeric NOT NULL,
     order_created_at timestamp without time zone NOT NULL,
     order_updated_at timestamp without time zone NOT NULL,
@@ -111,7 +110,7 @@ CREATE TABLE IF NOT EXISTS store.orders
 
 CREATE TABLE IF NOT EXISTS store.payment_method
 (
-    payment_method_id integer NOT NULL,
+    payment_method_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     payment_method_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     payment_method_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT payment_method_pkey PRIMARY KEY (payment_method_id)
@@ -119,7 +118,7 @@ CREATE TABLE IF NOT EXISTS store.payment_method
 
 CREATE TABLE IF NOT EXISTS store.sys_admin_user
 (
-    sys_user_id integer NOT NULL,
+    sys_user_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     sys_user_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     sys_user_email_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
     sys_user_email_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
@@ -134,7 +133,7 @@ CREATE TABLE IF NOT EXISTS store.sys_admin_user
 
 CREATE TABLE IF NOT EXISTS store.sys_user
 (
-    sys_user_id integer NOT NULL,
+    sys_user_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     sys_user_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
     sys_user_email_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
     sys_user_email_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
@@ -150,7 +149,7 @@ CREATE TABLE IF NOT EXISTS store.sys_user
 
 CREATE TABLE IF NOT EXISTS store.migrations
 (
-    migration_id integer NOT NULL,
+    migration_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     migration_name character varying NOT NULL,
     version character varying NOT NULL,
     CONSTRAINT migration_pkey PRIMARY KEY (migration_id)
@@ -238,5 +237,55 @@ ALTER TABLE IF EXISTS store.sys_user
     REFERENCES store.customer (customer_id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+
+
+
+
+ /* Alter the CREATED AT values for a default now */
+ALTER TABLE store.customer
+    ALTER COLUMN customer_created_at SET DEFAULT now();
+
+ALTER TABLE store.item
+    ALTER COLUMN item_created_at SET DEFAULT now();
+
+ALTER TABLE store.card
+    ALTER COLUMN card_created_at SET DEFAULT now();
+
+ALTER TABLE store.orders
+    ALTER COLUMN order_created_at SET DEFAULT now();
+
+ALTER TABLE store.sys_admin_user
+    ALTER COLUMN sys_user_created_at SET DEFAULT now();
+
+ALTER TABLE store.sys_user
+    ALTER COLUMN sys_user_created_at SET DEFAULT now();
+
+
+ /* Alter the UPDATED AT values for a default now */
+ALTER TABLE store.customer
+    ALTER COLUMN customer_updated_at SET DEFAULT now();
+
+ALTER TABLE store.item
+    ALTER COLUMN item_updated_at SET DEFAULT now();
+
+ALTER TABLE store.card
+    ALTER COLUMN card_updated_at SET DEFAULT now();
+
+ALTER TABLE store.orders
+    ALTER COLUMN order_updated_at SET DEFAULT now();
+
+ALTER TABLE store.sys_admin_user
+    ALTER COLUMN sys_user_updated_at SET DEFAULT now();
+
+ALTER TABLE store.sys_user
+    ALTER COLUMN sys_user_updated_at SET DEFAULT now();
+
+
+/* Alter the LAST ATTEMPT values for a default now */
+ALTER TABLE store.sys_admin_user
+    ALTER COLUMN sys_user_last_attempt SET DEFAULT now();
+
+ALTER TABLE store.sys_user
+    ALTER COLUMN sys_user_last_attempt SET DEFAULT now();
 
 END;

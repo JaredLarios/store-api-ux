@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../store-api-products"
+		},
+		{
+			"path": "../../../../BYUI-github/budget-gateway"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"autoflush",
+			"sessionmaker"
+		]
+	}
+}
