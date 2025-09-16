@@ -11,11 +11,3 @@ class UserBase(BaseModel):
     sys_user_attempts: int
     sys_user_last_attempt: datetime | None = None
     sys_user_enabled: bool
-
-    class Config:
-        from_attributes = True
-
-
-class CreateUser(UserBase):
-    class Config:
-        from_attributes = True

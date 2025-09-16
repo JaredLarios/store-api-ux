@@ -1,17 +1,36 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+""" 
+    database connection and handling data
+"""
+from typing import Optional
 
+import psycopg2 as pg
+import psycopg2.extras
 from app.core import config
 
-engine = create_engine(url=config.DATABASE_URI)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+db = None
 
-def get_db():
-    db = SessionLocal()
+
+def start_connection(custom_uri:Optional[str] =None):
+    """
+        Starts the connection to the database
+    """
     try:
-        yield db
-    finally:
-        db.close()
+        global db
+        if custom_uri:
+            db = pg.connect(custom_uri, cursor_factory=psycopg2.extras.RealDictCursor)
+        else:
+            db = pg.connect(config.DATABASE_URI, cursor_factory=psycopg2.extras.RealDictCursor)
+        db.autocommit = True
+    except Exception as exc:
+        raise RuntimeError("database error") from exc
+
+def get_database():
+    """
+        Get the database connection
+        return:
+            Database Connection with 
+    """
+    if not db:
+        raise RuntimeError("Database not initialized")
+    return db
