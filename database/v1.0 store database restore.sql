@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS store.category
 (
     category_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     category_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
-    category_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    category_name_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
+    category_name character varying(64) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT category_pkey PRIMARY KEY (category_id)
 );
 
@@ -63,8 +62,7 @@ CREATE TABLE IF NOT EXISTS store.item
 (
     item_id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     item_uuid character varying(45) COLLATE pg_catalog."default" NOT NULL,
-    item_name_sha character varying(84) COLLATE pg_catalog."default" NOT NULL,
-    item_name_aes character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    item_name character varying(45) COLLATE pg_catalog."default" NOT NULL,
     item_price numeric NOT NULL,
     item_price_off numeric,
     item_image_url character varying(45) COLLATE pg_catalog."default",
@@ -239,8 +237,6 @@ ALTER TABLE IF EXISTS store.sys_user
     ON DELETE NO ACTION;
 
 
-
-
  /* Alter the CREATED AT values for a default now */
 ALTER TABLE store.customer
     ALTER COLUMN customer_created_at SET DEFAULT now();
@@ -287,5 +283,6 @@ ALTER TABLE store.sys_admin_user
 
 ALTER TABLE store.sys_user
     ALTER COLUMN sys_user_last_attempt SET DEFAULT now();
+
 
 END;
