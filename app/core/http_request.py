@@ -101,6 +101,7 @@ class Client:
         self,
         path: str = "/",
         params: Optional[dict] = None,
+        data: Optional[dict] = None,
         json: Optional[dict] = None,
         headers: Optional[dict] = None,
     ) -> dict:
@@ -109,7 +110,7 @@ class Client:
         ) as client:
             try:
                 response = client.patch(
-                    path, params=params, json=json, timeout=self.__timeout
+                    path, params=params, data=data, json=json, timeout=self.__timeout
                 )
                 response.raise_for_status()
 

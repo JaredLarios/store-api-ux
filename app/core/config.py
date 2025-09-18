@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URI = str(os.environ.get("URI"))
+PRODUCT_API = str(os.environ.get("PRODUCT_API"))
 
 AES_SECRET_KEY = str(os.environ.get("AES_SECRET_KEY"))
 VI_SECRET_KEY = str(os.environ.get("VI_SECRET_KEY"))

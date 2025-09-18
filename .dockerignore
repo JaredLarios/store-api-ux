@@ -1,0 +1,7 @@
+./env
+./htmlcov
+./.vscode
+./.venv
+./.ruff_chache
+./.pytest_cache
+./database
