@@ -1,6 +1,8 @@
+from app.core.crypto import TextCrypto
 from fastapi import HTTPException, status
 from app.core.database import get_database
 from app.modules.admin.admin_schema import UserBase
+
 
 class AdminModel:
     def get_user_by_uuid(self, user_uuid: str):
@@ -18,7 +20,7 @@ class AdminModel:
                     sys_user_last_attempt,
                     sys_user_enabled
             FROM store.sys_admin_user
-            WHERE sys_user_uuid = %s
+            WHERE sys_user_uuid = %s And sys_user_enabled = 'True'
         """
 
         params = (user_uuid,)
@@ -31,15 +33,17 @@ class AdminModel:
         except Exception as exc:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="DB is not responding"
+                detail="DB is not responding",
             ) from exc
 
         if not user:
             return None
 
-        return UserBase.model_validate(dict(user))
+        return UserBase.model_validate(user)
 
     def get_user_by_username(self, username: str):
+        username_sha = TextCrypto(plain_text=username).hash_text()
+
         database = get_database()
         cursor = database.cursor()
         query = """
@@ -57,7 +61,7 @@ class AdminModel:
             WHERE sys_user_email_sha = %s
         """
 
-        params = (username,)
+        params = (username_sha,)
 
         try:
             cursor.execute(query, params)
@@ -67,10 +71,10 @@ class AdminModel:
         except Exception as exc:
             raise HTTPException(
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="DB is not responding"
+                detail="DB is not responding",
             ) from exc
 
         if not user:
             return None
 
-        return UserBase.model_validate(dict(user))
+        return UserBase.model_validate(user)

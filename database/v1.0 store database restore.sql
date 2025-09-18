@@ -284,5 +284,12 @@ ALTER TABLE store.sys_admin_user
 ALTER TABLE store.sys_user
     ALTER COLUMN sys_user_last_attempt SET DEFAULT now();
 
+/* DELETE CATEGORY RULE */
+ALTER TABLE store.item_has_category
+DROP CONSTRAINT fk_item_has_category_category1,
+ADD CONSTRAINT fk_item_has_category_category1
+FOREIGN KEY (category_id)
+REFERENCES store.category (category_id)
+ON DELETE CASCADE;
 
 END;

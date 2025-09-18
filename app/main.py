@@ -10,9 +10,11 @@ AdminModule.register(app)
 ProductsModule.register(app)
 CategoryModule.register(app)
 
+
 @app.on_event("startup")
 async def startup_event():
     start_connection()
+
 
 @app.get("/")
 async def root():

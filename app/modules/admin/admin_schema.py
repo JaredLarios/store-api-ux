@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 
+
 class UserBase(BaseModel):
     sys_user_uuid: str
     sys_user_email_aes: str

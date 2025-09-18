@@ -1,18 +1,22 @@
-""" module for http requests """
+"""module for http requests"""
+
 from typing import Optional
 import httpx
 from fastapi import HTTPException, status
 
 
-
 class Client:
-    """ HTTP Request handler """
+    """HTTP Request handler"""
+
     def __init__(self, base_url: str, timeout: Optional[float | int]):
         self.__base_url = base_url
         self.__timeout = timeout
 
     def get(
-        self, path: str = "/", params: Optional[dict] = None, headers: Optional[dict] = None
+        self,
+        path: str = "/",
+        params: Optional[dict] = None,
+        headers: Optional[dict] = None,
     ) -> dict:
         """
         Sends a GET request to an external service using the configured HTTP client.
@@ -26,7 +30,7 @@ class Client:
             dict: The JSON response from the external service.
 
         Raises:
-            HTTPException: If the response contains an HTTP error status code, 
+            HTTPException: If the response contains an HTTP error status code,
                         if the request times out, or if there is a connection error.
                 - 502 Bad Gateway: When a general request error occurs.
                 - 504 Gateway Timeout: When the request times out.
@@ -36,9 +40,7 @@ class Client:
             base_url=self.__base_url, timeout=self.__timeout, headers=headers
         ) as client:
             try:
-                response = client.get(
-                    path, params=params, timeout=self.__timeout
-                )
+                response = client.get(path, params=params, timeout=self.__timeout)
                 response.raise_for_status()
 
             except httpx.HTTPStatusError as exc:
@@ -171,15 +173,16 @@ class Client:
         return response.json()
 
     def delete(
-        self, path: str = "/", params: Optional[dict] = None, headers: Optional[dict] = None
+        self,
+        path: str = "/",
+        params: Optional[dict] = None,
+        headers: Optional[dict] = None,
     ) -> dict:
         with httpx.Client(
             base_url=self.__base_url, timeout=self.__timeout, headers=headers
         ) as client:
             try:
-                response = client.delete(
-                    path, params=params, timeout=self.__timeout
-                )
+                response = client.delete(path, params=params, timeout=self.__timeout)
                 response.raise_for_status()
 
             except httpx.HTTPStatusError as exc:
