@@ -1,8 +1,10 @@
-from app.modules.products.products_schema import UpdateProductDTO
-from app.modules.products.products_schema import ProductDTO
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 
+from app.modules.products.products_schema import ProductDTO, UpdateProductDTO
+from app.modules.admin.admin_schema import UserBase
 from app.modules.admin.admin_model import AdminModel
+from app.common.dependencies import get_current_admin_user
 from app.core import config
 from app.core.http_request import Client
 
@@ -24,7 +26,10 @@ async def get_all_product(
 
 # Need to add Admin JWT Authentication
 @router.post("/")
-async def create_product(payload: ProductDTO):
+async def create_product(
+    payload: ProductDTO,
+    current_user: Annotated[UserBase, Depends(get_current_admin_user)],
+):
     body = payload.model_dump(exclude_none=True)
     if payload.item_price_off_until_date:
         body["item_price_off_until_date"] = str(payload.item_price_off_until_date)
@@ -33,7 +38,10 @@ async def create_product(payload: ProductDTO):
 
 
 @router.patch("/")
-async def update_product(payload: UpdateProductDTO):
+async def update_product(
+    payload: UpdateProductDTO,
+    current_user: Annotated[UserBase, Depends(get_current_admin_user)],
+):
     body = payload.model_dump(exclude_none=True)
     print(body)
     if payload.item_price_off_until_date:
@@ -42,5 +50,8 @@ async def update_product(payload: UpdateProductDTO):
 
 
 @router.delete("/")
-async def delete_product(item_uuid: str):
+async def delete_product(
+    item_uuid: str,
+    current_user: Annotated[UserBase, Depends(get_current_admin_user)],
+):
     return client.delete(path="/product", params={"item_uuid": item_uuid})

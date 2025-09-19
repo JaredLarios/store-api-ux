@@ -1,5 +1,5 @@
 import json
-from typing import Optional, TypeVar, Optional
+from typing import TypeVar, Optional
 from pydantic import BaseModel
 from datetime import datetime
 from fastapi import HTTPException, status
