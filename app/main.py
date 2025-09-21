@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.modules.category.category_model import CategoryModule
 from app.modules.products.products_model import ProductsModule
 
@@ -19,3 +20,19 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+app.add_middleware(
+    # type: ignore[arg-type]
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "PUT", "HEAD", "OPTIONS"],
+    allow_headers=[
+        "Access-Control-Allow-Headers",
+        "Content-Type",
+        "Authorization",
+        "Access-Control-Allow-Origin",
+        "Set-Cookie",
+    ],
+)
