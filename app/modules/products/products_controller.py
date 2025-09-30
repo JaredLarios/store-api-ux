@@ -14,13 +14,22 @@ adminModel = AdminModel()
 client: Client = Client(base_url=config.PRODUCT_API, timeout=50.0)
 
 
-@router.get("/")
+@router.get("/all")
 async def get_all_product(
     page: int = None, quantity: int = None, category_uuid: str = None
 ):
     return client.get(
-        path="/product",
+        path="/product/all",
         params={"page": page, "quantity": quantity, "category_uuid": category_uuid},
+    )
+
+@router.get("/")
+async def get_single_product(
+    item_uuid: str = None
+):
+    return client.get(
+        path="/product",
+        params={"item_uuid": item_uuid},
     )
 
 
