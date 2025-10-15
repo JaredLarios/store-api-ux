@@ -33,8 +33,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install uv flake8 pytest requests pytest-mock selenium requests-mock coverage
-        uv pip compile project.toml -o requirements.txt
+        pip install flake8 pytest requests pytest-mock selenium requests-mock coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
     - name: Lint with flake8
