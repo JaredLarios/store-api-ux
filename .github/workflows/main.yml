@@ -33,8 +33,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install uv pyrefly flake8 pytest requests pytest-mock selenium requests-mock coverage
-        uv pip compile project.toml -o requirements.txt
+        pip install pyrefly flake8 pytest requests pytest-mock selenium requests-mock coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
     - name: Lint with flake8
@@ -46,7 +45,7 @@ jobs:
 
     - name: Type Checker
       run: |
-        pyrefly check
+          pyrefly check
 
     - name: Run tests
       run: |
