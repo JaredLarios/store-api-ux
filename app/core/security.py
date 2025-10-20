@@ -1,14 +1,15 @@
 import json
-from typing import TypeVar, Optional
-from pydantic import BaseModel
+from typing import TypeVar, Optional, cast
 from datetime import datetime
 from fastapi import HTTPException, status
 from passlib.context import CryptContext
 from app.core.crypto import TextCrypto
+from app.modules.admin.admin_model import AdminModel
+from app.modules.admin.admin_schema import UserBase
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T", bound=UserBase)
 
 
 class AuthUtils:
@@ -28,7 +29,7 @@ class AuthUtils:
         return pwd_context.verify(plain_password, hashed_password)
 
     def authenticate_user(
-        self, username: str, password: str, auth_model: object
+        self, username: str, password: str, auth_model: AdminModel
     ) -> Optional[T]:
         """
         Authenticate user using username and password
@@ -42,7 +43,7 @@ class AuthUtils:
         user = auth_model.get_user_by_username(username)
         if not user or not self.verify_password(password, user.sys_user_password):
             return None
-        return user
+        return cast(T, user)
 
     def verify_code(self, code: str):
         try:

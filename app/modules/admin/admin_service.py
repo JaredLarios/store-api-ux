@@ -16,7 +16,7 @@ class AdminService:
         auth_utils: AuthUtils = AuthUtils(),
         admin_model: AdminModel = AdminModel(),
     ) -> Optional[UserBase]:
-        user: UserBase = auth_utils.authenticate_user(
+        user: Optional[UserBase] = auth_utils.authenticate_user(
             username=form_data.username,
             password=form_data.password,
             auth_model=admin_model,

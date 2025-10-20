@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import APIRouter, Depends
 
 from app.modules.products.products_schema import ProductDTO, UpdateProductDTO
@@ -16,17 +16,18 @@ client: Client = Client(base_url=config.PRODUCT_API, timeout=50.0)
 
 @router.get("/all")
 async def get_all_product(
-    page: int = None, quantity: int = None, category_uuid: str = None
+    page: Optional[int] = None,
+    quantity: Optional[int] = None,
+    category_uuid: Optional[str] = None,
 ):
     return client.get(
         path="/product/all",
         params={"page": page, "quantity": quantity, "category_uuid": category_uuid},
     )
 
+
 @router.get("/")
-async def get_single_product(
-    item_uuid: str = None
-):
+async def get_single_product(item_uuid: Optional[str] = None):
     return client.get(
         path="/product",
         params={"item_uuid": item_uuid},

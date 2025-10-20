@@ -19,7 +19,6 @@ async def login_access(
     admin_service: Annotated[AdminService, Depends(AdminService)],
     response: Response,
 ):
-
     user: Optional[UserBase] = admin_service.get_active_user_by_form(
         form_data=form_data
     )
