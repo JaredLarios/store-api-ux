@@ -1,10 +1,12 @@
 from pydantic import BaseModel
+from typing import Optional
 
-
-class CategoryDTO(BaseModel):
-    category_uuid: str
+class CategoryBase(BaseModel):
     category_name: str
 
+class CategoryDTO(CategoryBase):
+    category_uuid: str
 
-class NewCategoryDTO(CategoryDTO):
-    category_uuid: str | None = None
+
+class NewCategoryDTO(CategoryBase):
+    category_uuid: Optional[str] = None
