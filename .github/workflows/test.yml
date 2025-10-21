@@ -24,7 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: Staging
+      name: Test
     steps:
     - name: Checkout the latest code
       uses: actions/checkout@v4.1.2
@@ -35,7 +35,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyrefly flake8 pytest requests pytest-mock selenium requests-mock coverage
+        pip install pyrefly flake8 pytest pytest-cov requests pytest-mock selenium requests-mock coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
     - name: Lint with flake8
@@ -53,6 +53,10 @@ jobs:
       run: |
         pytest
 
+    - name: Check Coverage
+      run: |
+        pytest --cov=app --cov-fail-under=1 tests
+
     
   analyze:
     needs: build
@@ -62,54 +66,7 @@ jobs:
 
   deploy:
     needs: analyze
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Check if triggered by PR
-        id: check_pr
-        run: |
-          if [ -z "${{ github.event.pull_request.number }}"]; then
-            echo "is_pr=false" >> $GITHUB_OUTPUT
-            echo "ℹ️ Not a pull request event — skipping merge step."
-          else
-            echo "is_pr=true" >> $GITHUB_OUTPUT
-            echo "✅ Pull request event detected (#${{ github.event.pull_request.number }})"
-          fi
-
-      - name: Check if PR is mergeable
-        if: steps.check_pr.outputs.is_pr == 'true'
-        id: mergeable
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Checking if PR #$PR_NUMBER is mergeable..."
-
-          # Fetch PR info from GitHub API
-          response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER)
-
-          mergeable=$(echo "$response" | jq -r '.mergeable')
-          mergeable_state=$(echo "$response" | jq -r '.mergeable_state')
-
-          echo "mergeable=$mergeable"
-          echo "mergeable_state=$mergeable_state"
-
-          if [ "$mergeable" != "true" ]; then
-            echo "❌ Pull request has conflicts or is not mergeable (state: $mergeable_state)."
-            exit 1
-          fi
-
-      - name: Merge Pull Request
-        if: steps.mergeable.outcome == 'success'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          echo "Merging PR #$PR_NUMBER..."
-          gh auth setup-git
-          gh auth status
-          gh pr merge $PR_NUMBER --merge --admin 
+    uses: ./.github/workflows/pr-merge.yml
+    with:
+      pr_number: "${{ github.event.pull_request.number }}"
+      github_repo: "${{ github.repository }}"
