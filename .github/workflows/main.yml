@@ -49,7 +49,7 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest
+        pytest --cov=app --cov-fail-under=1 tests
 
     
   analyze:
