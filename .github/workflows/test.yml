@@ -51,10 +51,6 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest
-
-    - name: Check Coverage
-      run: |
         pytest --cov=app --cov-fail-under=1 tests
 
     
